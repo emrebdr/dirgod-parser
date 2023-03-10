@@ -1,0 +1,35 @@
+FROM scratch
+
+WORKDIR /var/www/html
+
+CREATEFOLDER a/b/c
+CREATEFOLDER a/b/c d/f/g h/i/j
+
+CREATEFILE a/b/c/d.txt
+CREATEFILE a/b/c.txt a/b/c/d.txt a/b/c/e.txt
+
+COPYFOLDER a/b/c d/f/g
+
+COPYFILE a/b/c.txt a/b/c
+
+MOVEFOLDER a/b/c d/f/g
+
+MOVEFILE a/b/c.txt a/b/c
+
+DELETEFOLDER a/b/c
+DELETEFOLDER a/b/c d/f/g h/i/j
+
+DELETEFILE a/b/c.txt
+DELETEFILE a/b/c.txt a/b/c/d.txt a/b/c/e.txt
+
+CHMOD 777 a/b/c.txt a/b/c/d.txt a/b/c/e.txt
+CHMOD 777 a/b/c a/b/c/d a/b/c/e recursive
+
+CHOWN www-data:www-data a/b/c.txt a/b/c/d.txt a/b/c/e.txt
+CHOWN www-data:www-data a/b/c a/b/c/d a/b/c/e recursive
+
+// WRITE a/b/c.txt "Hello World!"
+// WRITE a/b/c.txt "Hello World!" append
+// WRITE a/b/c.txt github.com/roberto-butti/roberto-butti.github.io/raw/master/README.md
+
+// This is a comment
