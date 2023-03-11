@@ -8,5 +8,7 @@ import (
 
 func main() {
 	parser := parser.NewParser("./example/Dirgod")
-	fmt.Println(parser.Parse().ToString())
+	program := parser.Parse()
+
+	fmt.Println(program.ToString())
 }

@@ -19,7 +19,6 @@ type Parser struct {
 
 // NewParser creates a new Parser object
 func NewParser(configPath string) *Parser {
-	//! remove the configPath from the parameters. Because configPath dynamically find the directory of the config file
 	config, err := os.Open(configPath)
 	if err != nil {
 		log.Fatalf("Error opening config file: %s", err)

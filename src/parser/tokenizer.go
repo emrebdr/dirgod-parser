@@ -1,7 +1,6 @@
 package parser
 
 import (
-	"fmt"
 	"log"
 	"regexp"
 
@@ -31,7 +30,6 @@ func (t *Tokenizer) Next() *models.Token {
 	}
 
 	line := t.Lines[t.CurrentLine]
-	fmt.Println(line)
 	for tokenType, regex := range constants.TOKENS {
 		token := t.matchToken(regex, line)
 		if token == "" {
