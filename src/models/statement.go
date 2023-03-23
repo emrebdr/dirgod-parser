@@ -3,7 +3,7 @@ package models
 import "github.com/emrebdr/dirgod-parser/src/constants"
 
 type StatementList struct {
-	Statement []*Statement
+	Statement []Statement
 }
 
 type Statement struct {

@@ -7,7 +7,7 @@ import (
 
 func (p *Parser) StatementList(stopDelimiter constants.TokenType) *models.StatementList {
 	statementList := &models.StatementList{
-		Statement: []*models.Statement{},
+		Statement: []models.Statement{},
 	}
 	if stopDelimiter == constants.EOF {
 		for p.nextLine != nil {
@@ -22,7 +22,7 @@ func (p *Parser) StatementList(stopDelimiter constants.TokenType) *models.Statem
 	return statementList
 }
 
-func (p *Parser) Statement() *models.Statement {
+func (p *Parser) Statement() models.Statement {
 	switch p.nextLine.Type {
 	case constants.FROM:
 		return p.BlockStatement()
@@ -31,9 +31,9 @@ func (p *Parser) Statement() *models.Statement {
 	}
 }
 
-func (p *Parser) ExpressionStatement() *models.Statement {
+func (p *Parser) ExpressionStatement() models.Statement {
 	expression := p.Expression()
-	return &models.Statement{
+	return models.Statement{
 		Type: constants.EXPRESSIONSTATEMENT,
 		Body: *expression,
 	}
@@ -43,7 +43,7 @@ func (p *Parser) Expression() *models.Token {
 	return p.Literal()
 }
 
-func (p *Parser) BlockStatement() *models.Statement {
+func (p *Parser) BlockStatement() models.Statement {
 	p.Eat(constants.FROM)
 
 	var body *models.StatementList
@@ -53,7 +53,7 @@ func (p *Parser) BlockStatement() *models.Statement {
 		body = &models.StatementList{}
 	}
 
-	return &models.Statement{
+	return models.Statement{
 		Type: constants.BLOCKSTATEMENT,
 		Body: body,
 	}
