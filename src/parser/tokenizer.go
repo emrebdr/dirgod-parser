@@ -37,7 +37,6 @@ func (t *Tokenizer) Next() *models.Token {
 		}
 
 		if tokenType == constants.COMMENTLINE {
-			t.CurrentLine++
 			return t.Next()
 		}
 
