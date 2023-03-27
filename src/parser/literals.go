@@ -33,6 +33,8 @@ func (p *Parser) Literal() *models.Token {
 		return p.chownLiteral()
 	case constants.FROM:
 		return p.fromLiteral()
+	case constants.WRITE:
+		return p.writeLiteral()
 	}
 
 	log.Panicf("Unexpected token %s at line %d", p.nextLine.Value, p.CurrentLine+1)
@@ -131,6 +133,14 @@ func (p *Parser) chownLiteral() *models.Token {
 	token := p.Eat(constants.CHOWN)
 	return &models.Token{
 		Type:  constants.CHOWN,
+		Value: token.Value,
+	}
+}
+
+func (p *Parser) writeLiteral() *models.Token {
+	token := p.Eat(constants.WRITE)
+	return &models.Token{
+		Type:  constants.WRITE,
 		Value: token.Value,
 	}
 }

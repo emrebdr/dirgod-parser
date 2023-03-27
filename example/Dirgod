@@ -28,8 +28,8 @@ CHMOD 777 a/b/c a/b/c/d a/b/c/e recursive
 CHOWN www-data:www-data a/b/c.txt a/b/c/d.txt a/b/c/e.txt
 CHOWN www-data:www-data a/b/c a/b/c/d a/b/c/e recursive
 
-// WRITE a/b/c.txt "Hello World!"
+WRITE github.com/roberto-butti/roberto-butti.github.io/raw/master/README.md a/b/c.txt url
+
 // WRITE a/b/c.txt "Hello World!" append
-// WRITE a/b/c.txt github.com/roberto-butti/roberto-butti.github.io/raw/master/README.md
 
 // This is a comment

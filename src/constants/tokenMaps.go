@@ -16,4 +16,5 @@ var TOKENS = map[TokenType]*regexp.Regexp{
 	MOVEFILE:     MOVEFILEREGEX,
 	CHMOD:        CHMODREGEX,
 	CHOWN:        CHOWNREGEX,
+	WRITE:        WRITEREGEX,
 }

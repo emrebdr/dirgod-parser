@@ -21,4 +21,5 @@ const (
 	CHMOD               TokenType = "CHMOD"
 	CHOWN               TokenType = "CHOWN"
 	EOF                 TokenType = "EOF"
+	WRITE               TokenType = "WRITE"
 )
