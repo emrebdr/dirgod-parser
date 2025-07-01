@@ -2,15 +2,15 @@ package parser
 
 import (
 	"bufio"
-	"log"
+	"fmt"
 	"os"
+	"strings"
 
 	"github.com/emrebdr/dirgod-parser/src/constants"
 	"github.com/emrebdr/dirgod-parser/src/models"
 )
 
 type Parser struct {
-	Config      *os.File
 	Tokenizer   *Tokenizer
 	Lines       []string
 	CurrentLine uint16
@@ -18,20 +18,33 @@ type Parser struct {
 }
 
 // NewParser creates a new Parser object
-func NewParser(configPath string) *Parser {
+func NewParser(configPath string) (*Parser, error) {
 	config, err := os.Open(configPath)
 	if err != nil {
-		log.Fatalf("Error opening config file: %s", err)
+		return nil, fmt.Errorf("error opening config file: %w", err)
 	}
 	defer config.Close()
 	lines := ReadLines(config)
 
 	return &Parser{
-		Config:      config,
 		Tokenizer:   NewTokenizer(lines),
 		Lines:       lines,
 		CurrentLine: 0,
+	}, nil
+}
+
+// NewParserFromString creates a new Parser object from string content
+func NewParserFromString(content string) (*Parser, error) {
+	lines, err := ReadLinesFromString(content)
+	if err != nil {
+		return nil, err
 	}
+
+	return &Parser{
+		Tokenizer:   NewTokenizer(lines),
+		Lines:       lines,
+		CurrentLine: 0,
+	}, nil
 }
 
 func ReadLines(config *os.File) []string {
@@ -51,30 +64,75 @@ func ReadLines(config *os.File) []string {
 	return lines
 }
 
-func (p *Parser) Program() *models.Program {
-	return &models.Program{
-		Type: constants.PROGRAM,
-		Body: p.StatementList(constants.EOF),
+func ReadLinesFromString(content string) ([]string, error) {
+	scanner := bufio.NewScanner(strings.NewReader(content))
+
+	var lines []string
+	for scanner.Scan() {
+		newLine := scanner.Text()
+		if len(newLine) == 0 {
+			continue
+		}
+
+		lines = append(lines, newLine)
 	}
+
+	if err := scanner.Err(); err != nil {
+		return nil, fmt.Errorf("error reading string: %w", err)
+	}
+
+	return lines, nil
 }
 
-func (p *Parser) Parse() *models.Program {
-	p.nextLine = p.Tokenizer.Next()
+func (p *Parser) Program() (*models.Program, error) {
+	body, err := p.StatementList(constants.EOF)
+	if err != nil {
+		return nil, err
+	}
+
+	return &models.Program{
+		Type: constants.PROGRAM,
+		Body: body,
+	}, nil
+}
+
+func (p *Parser) Parse() (*models.Program, error) {
+	nextLine, err := p.Tokenizer.Next()
+	if err != nil {
+		return nil, err
+	}
+
+	p.nextLine = nextLine
+
 	return p.Program()
 }
 
-func (p *Parser) Eat(tokenType constants.TokenType) *models.Token {
+func (p *Parser) IsValid() bool {
+	_, err := p.Parse()
+	if err != nil {
+		return false
+	}
+
+	return true
+}
+
+func (p *Parser) Eat(tokenType constants.TokenType) (*models.Token, error) {
 	token := p.nextLine
 
 	if token == nil {
-		log.Panicf("Unexpected EOF at line %d", p.CurrentLine+1)
+		return nil, fmt.Errorf("unexpected EOF at line %d", p.CurrentLine+1)
 	}
 
 	if token.Type != tokenType {
-		log.Panicf("Unexpected token %s at line %d", token.Value, p.CurrentLine+1)
+		return nil, fmt.Errorf("unexpected token %s at line %d", token.Value, p.CurrentLine+1)
 	}
 
-	p.nextLine = p.Tokenizer.Next()
+	nextLine, err := p.Tokenizer.Next()
+	if err != nil {
+		return nil, err
+	}
 
-	return token
+	p.nextLine = nextLine
+
+	return token, nil
 }

@@ -7,8 +7,11 @@ import (
 )
 
 func main() {
-	parser := parser.NewParser("./example/Dirgod")
-	program := parser.Parse()
+	parser, err := parser.NewParser("./example/Dirgod")
+	if err != nil {
+		panic(err)
+	}
 
-	fmt.Println(program.ToString())
+	isValid := parser.IsValid()
+	fmt.Println(isValid)
 }

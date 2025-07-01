@@ -1,13 +1,12 @@
 package parser
 
 import (
-	"log"
-
+	"fmt"
 	"github.com/emrebdr/dirgod-parser/src/constants"
 	"github.com/emrebdr/dirgod-parser/src/models"
 )
 
-func (p *Parser) Literal() *models.Token {
+func (p *Parser) Literal() (*models.Token, error) {
 	switch p.nextLine.Type {
 	case constants.CREATEFOLDER:
 		return p.createFolderLiteral()
@@ -37,110 +36,161 @@ func (p *Parser) Literal() *models.Token {
 		return p.writeLiteral()
 	}
 
-	log.Panicf("Unexpected token %s at line %d", p.nextLine.Value, p.CurrentLine+1)
-	return nil
+	return nil, fmt.Errorf("unexpected token %s at line %d", p.nextLine.Value, p.CurrentLine+1)
 }
 
-func (p *Parser) fromLiteral() *models.Token {
-	token := p.Eat(constants.FROM)
+func (p *Parser) fromLiteral() (*models.Token, error) {
+	token, err := p.Eat(constants.FROM)
+	if err != nil {
+		return nil, err
+	}
+
 	return &models.Token{
 		Type:  constants.FROM,
 		Value: token.Value,
-	}
+	}, nil
 }
 
-func (p *Parser) createFolderLiteral() *models.Token {
-	token := p.Eat(constants.CREATEFOLDER)
+func (p *Parser) createFolderLiteral() (*models.Token, error) {
+	token, err := p.Eat(constants.CREATEFOLDER)
+	if err != nil {
+		return nil, err
+	}
+
 	return &models.Token{
 		Type:  constants.CREATEFOLDER,
 		Value: token.Value,
-	}
+	}, nil
 }
 
-func (p *Parser) createFileLiteral() *models.Token {
-	token := p.Eat(constants.CREATEFILE)
+func (p *Parser) createFileLiteral() (*models.Token, error) {
+	token, err := p.Eat(constants.CREATEFILE)
+	if err != nil {
+		return nil, err
+	}
+
 	return &models.Token{
 		Type:  constants.CREATEFILE,
 		Value: token.Value,
-	}
+	}, nil
 }
 
-func (p *Parser) workDirLiteral() *models.Token {
-	token := p.Eat(constants.WORKDIR)
+func (p *Parser) workDirLiteral() (*models.Token, error) {
+	token, err := p.Eat(constants.WORKDIR)
+	if err != nil {
+		return nil, err
+	}
+
 	return &models.Token{
 		Type:  constants.WORKDIR,
 		Value: token.Value,
-	}
+	}, nil
 }
 
-func (p *Parser) copyFolderLiteral() *models.Token {
-	token := p.Eat(constants.COPYFOLDER)
+func (p *Parser) copyFolderLiteral() (*models.Token, error) {
+	token, err := p.Eat(constants.COPYFOLDER)
+	if err != nil {
+		return nil, err
+	}
+
 	return &models.Token{
 		Type:  constants.COPYFOLDER,
 		Value: token.Value,
-	}
+	}, nil
 }
 
-func (p *Parser) copyFileLiteral() *models.Token {
-	token := p.Eat(constants.COPYFILE)
+func (p *Parser) copyFileLiteral() (*models.Token, error) {
+	token, err := p.Eat(constants.COPYFILE)
+	if err != nil {
+		return nil, err
+	}
+
 	return &models.Token{
 		Type:  constants.COPYFILE,
 		Value: token.Value,
-	}
+	}, nil
 }
 
-func (p *Parser) moveFileLiteral() *models.Token {
-	token := p.Eat(constants.MOVEFILE)
+func (p *Parser) moveFileLiteral() (*models.Token, error) {
+	token, err := p.Eat(constants.MOVEFILE)
+	if err != nil {
+		return nil, err
+	}
+
 	return &models.Token{
 		Type:  constants.MOVEFILE,
 		Value: token.Value,
-	}
+	}, nil
 }
 
-func (p *Parser) moveFolderLiteral() *models.Token {
-	token := p.Eat(constants.MOVEFOLDER)
+func (p *Parser) moveFolderLiteral() (*models.Token, error) {
+	token, err := p.Eat(constants.MOVEFOLDER)
+	if err != nil {
+		return nil, err
+	}
+
 	return &models.Token{
 		Type:  constants.MOVEFOLDER,
 		Value: token.Value,
-	}
+	}, nil
 }
 
-func (p *Parser) deleteFolderLiteral() *models.Token {
-	token := p.Eat(constants.DELETEFOLDER)
+func (p *Parser) deleteFolderLiteral() (*models.Token, error) {
+	token, err := p.Eat(constants.DELETEFOLDER)
+	if err != nil {
+		return nil, err
+	}
+
 	return &models.Token{
 		Type:  constants.DELETEFOLDER,
 		Value: token.Value,
-	}
+	}, nil
 }
 
-func (p *Parser) deleteFileLiteral() *models.Token {
-	token := p.Eat(constants.DELETEFILE)
+func (p *Parser) deleteFileLiteral() (*models.Token, error) {
+	token, err := p.Eat(constants.DELETEFILE)
+	if err != nil {
+		return nil, err
+	}
+
 	return &models.Token{
 		Type:  constants.DELETEFILE,
 		Value: token.Value,
-	}
+	}, nil
 }
 
-func (p *Parser) chmodLiteral() *models.Token {
-	token := p.Eat(constants.CHMOD)
+func (p *Parser) chmodLiteral() (*models.Token, error) {
+	token, err := p.Eat(constants.CHMOD)
+	if err != nil {
+		return nil, err
+	}
+
 	return &models.Token{
 		Type:  constants.CHMOD,
 		Value: token.Value,
-	}
+	}, nil
 }
 
-func (p *Parser) chownLiteral() *models.Token {
-	token := p.Eat(constants.CHOWN)
+func (p *Parser) chownLiteral() (*models.Token, error) {
+	token, err := p.Eat(constants.CHOWN)
+	if err != nil {
+		return nil, err
+	}
+
 	return &models.Token{
 		Type:  constants.CHOWN,
 		Value: token.Value,
-	}
+	}, nil
 }
 
-func (p *Parser) writeLiteral() *models.Token {
-	token := p.Eat(constants.WRITE)
+func (p *Parser) writeLiteral() (*models.Token, error) {
+	token, err := p.Eat(constants.WRITE)
+	if err != nil {
+		return nil, err
+	}
+
 	return &models.Token{
 		Type:  constants.WRITE,
 		Value: token.Value,
-	}
+	}, nil
 }

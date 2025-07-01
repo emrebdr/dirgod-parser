@@ -1,7 +1,7 @@
 package parser
 
 import (
-	"log"
+	"fmt"
 	"regexp"
 
 	"github.com/emrebdr/dirgod-parser/src/constants"
@@ -24,9 +24,9 @@ func (t *Tokenizer) HasNext() bool {
 	return len(t.Lines) > int(t.CurrentLine)
 }
 
-func (t *Tokenizer) Next() *models.Token {
+func (t *Tokenizer) Next() (*models.Token, error) {
 	if !t.HasNext() {
-		return nil
+		return nil, nil
 	}
 
 	line := t.Lines[t.CurrentLine]
@@ -43,11 +43,10 @@ func (t *Tokenizer) Next() *models.Token {
 		return &models.Token{
 			Type:  tokenType,
 			Value: token,
-		}
+		}, nil
 	}
 
-	log.Panicf("Error parsing line %d: %s", t.CurrentLine+1, line)
-	return nil
+	return nil, fmt.Errorf("error parsing line %d: %s", t.CurrentLine+1, line)
 }
 
 func (t *Tokenizer) matchToken(regex *regexp.Regexp, line string) string {

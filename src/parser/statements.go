@@ -5,24 +5,32 @@ import (
 	"github.com/emrebdr/dirgod-parser/src/models"
 )
 
-func (p *Parser) StatementList(stopDelimiter constants.TokenType) *models.StatementList {
+func (p *Parser) StatementList(stopDelimiter constants.TokenType) (*models.StatementList, error) {
 	statementList := &models.StatementList{
 		Statement: []models.Statement{},
 	}
 	if stopDelimiter == constants.EOF {
 		for p.nextLine != nil {
-			statementList.Statement = append(statementList.Statement, p.Statement())
+			statement, err := p.Statement()
+			if err != nil {
+				return nil, err
+			}
+			statementList.Statement = append(statementList.Statement, statement)
 		}
 	} else {
 		for p.nextLine != nil && p.nextLine.Type != stopDelimiter {
-			statementList.Statement = append(statementList.Statement, p.Statement())
+			statement, err := p.Statement()
+			if err != nil {
+				return nil, err
+			}
+			statementList.Statement = append(statementList.Statement, statement)
 		}
 	}
 
-	return statementList
+	return statementList, nil
 }
 
-func (p *Parser) Statement() models.Statement {
+func (p *Parser) Statement() (models.Statement, error) {
 	switch p.nextLine.Type {
 	case constants.FROM:
 		return p.BlockStatement()
@@ -31,24 +39,34 @@ func (p *Parser) Statement() models.Statement {
 	}
 }
 
-func (p *Parser) ExpressionStatement() models.Statement {
-	expression := p.Expression()
+func (p *Parser) ExpressionStatement() (models.Statement, error) {
+	expression, err := p.Expression()
+	if err != nil {
+		return models.Statement{}, err
+	}
+
 	return models.Statement{
 		Type: constants.EXPRESSIONSTATEMENT,
 		Body: *expression,
-	}
+	}, nil
 }
 
-func (p *Parser) Expression() *models.Token {
+func (p *Parser) Expression() (*models.Token, error) {
 	return p.Literal()
 }
 
-func (p *Parser) BlockStatement() models.Statement {
-	p.Eat(constants.FROM)
+func (p *Parser) BlockStatement() (models.Statement, error) {
+	_, err := p.Eat(constants.FROM)
+	if err != nil {
+		return models.Statement{}, err
+	}
 
 	var body *models.StatementList
 	if p.nextLine.Type != constants.FROM {
-		body = p.StatementList(constants.FROM)
+		body, err = p.StatementList(constants.FROM)
+		if err != nil {
+			return models.Statement{}, nil
+		}
 	} else {
 		body = &models.StatementList{}
 	}
@@ -56,5 +74,5 @@ func (p *Parser) BlockStatement() models.Statement {
 	return models.Statement{
 		Type: constants.BLOCKSTATEMENT,
 		Body: body,
-	}
+	}, nil
 }
